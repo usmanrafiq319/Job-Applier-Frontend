@@ -42,3 +42,33 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+
+# backend files 
+# Virtual environment
+backend/.venv/
+backend/venv/
+
+# Environment variables
+backend/.env
+
+# Python cache
+backend/__pycache__/
+backend/**/*.py[cod]
+backend/**/$py.class
+
+# Testing
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+
+# IDE
+backend/.vscode/
+backend/.idea/
+
+# OS
+backend/.DS_Store
+backend/Thumbs.db
+
+# Uploaded resumes
+backend/storage/resumes/

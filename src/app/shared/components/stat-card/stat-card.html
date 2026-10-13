@@ -1,0 +1,63 @@
+<div class="app-card h-full">
+
+  <div class="app-card-body">
+
+    <div class="flex items-start justify-between gap-4">
+
+      <div>
+
+        <p class="text-sm font-medium text-slate-500">
+          {{ title() }}
+        </p>
+
+        <p
+          class="
+            mt-2
+            text-3xl
+            font-semibold
+            tracking-tight
+            text-slate-950
+          "
+        >
+          {{ value() }}
+        </p>
+
+        @if (description()) {
+
+          <p
+            class="
+              mt-2
+              text-xs
+              leading-5
+              text-slate-500
+            "
+          >
+            {{ description() }}
+          </p>
+
+        }
+
+      </div>
+
+      <div
+        class="
+          flex
+          size-11
+          shrink-0
+          items-center
+          justify-center
+          rounded-xl
+          bg-brand-50
+          text-lg
+          font-semibold
+          text-brand-700
+        "
+      >
+        {{ icon() }}
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

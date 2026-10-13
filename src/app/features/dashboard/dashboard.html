@@ -1,0 +1,551 @@
+<div class="page-container">
+
+  <!-- Page Header -->
+
+  <div class="page-header">
+
+    <h1 class="page-title">
+      Dashboard
+    </h1>
+
+    <p class="page-description">
+      Track job matches, applications and your AI agent activity.
+    </p>
+
+  </div>
+
+
+  <!-- Stats -->
+
+  <section
+    class="
+      grid
+      gap-4
+      sm:grid-cols-2
+      xl:grid-cols-4
+    "
+  >
+
+    <app-stat-card
+      title="Jobs Found"
+      [value]="dashboard().stats.jobsFound"
+      description="Opportunities discovered"
+      icon="⌕"
+    />
+
+    <app-stat-card
+      title="High Matches"
+      [value]="dashboard().stats.highMatches"
+      description="Strong profile matches"
+      icon="↗"
+    />
+
+    <app-stat-card
+      title="Applications Sent"
+      [value]="dashboard().stats.applicationsSent"
+      description="Applications submitted"
+      icon="✉"
+    />
+
+    <app-stat-card
+      title="Replies"
+      [value]="dashboard().stats.replies"
+      description="Recruiter responses"
+      icon="↩"
+    />
+
+  </section>
+
+  <!-- agent acitivity test-->
+   <section class="app-card mt-6">
+
+  <div class="app-card-header">
+
+    <h2 class="section-title">
+      Agent Activity
+    </h2>
+
+    <p class="section-description">
+      Current LangGraph workflow execution.
+    </p>
+
+  </div>
+
+
+  <div class="app-card-body">
+
+    <app-agent-activity
+      [run]="agentRun()"
+    />
+
+  </div>
+
+</section>
+
+  <!-- Main Dashboard Grid -->
+
+  <section
+    class="
+      mt-6
+      grid
+      gap-6
+      xl:grid-cols-[1.4fr_0.8fr]
+    "
+  >
+
+    <!-- Recent Job Matches -->
+
+    <div class="app-card">
+
+      <div class="app-card-header">
+
+        <div
+          class="
+            flex
+            items-start
+            justify-between
+            gap-4
+          "
+        >
+
+          <div>
+
+            <h2 class="section-title">
+              Recent job matches
+            </h2>
+
+            <p class="section-description">
+              Roles recently analyzed against your profile.
+            </p>
+
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+          >
+            View all
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div>
+
+        @for (
+          job of dashboard().recentJobs;
+          track job.id
+        ) {
+
+          <div
+            class="
+              border-b
+              border-slate-100
+              px-5
+              py-4
+              last:border-b-0
+              sm:px-6
+            "
+          >
+
+            <div
+              class="
+                flex
+                flex-col
+                gap-4
+                sm:flex-row
+                sm:items-center
+                sm:justify-between
+              "
+            >
+
+              <div class="min-w-0">
+
+                <h3
+                  class="
+                    truncate
+                    text-sm
+                    font-semibold
+                    text-slate-950
+                  "
+                >
+                  {{ job.title }}
+                </h3>
+
+                <p
+                  class="
+                    mt-1
+                    text-sm
+                    text-slate-500
+                  "
+                >
+                  {{ job.company }}
+                  ·
+                  {{ job.location }}
+                </p>
+
+                <p
+                  class="
+                    mt-2
+                    line-clamp-2
+                    text-sm
+                    leading-6
+                    text-slate-600
+                  "
+                >
+                  {{ job.description }}
+                </p>
+
+              </div>
+
+
+              <div
+                class="
+                  flex
+                  shrink-0
+                  items-center
+                  gap-3
+                "
+              >
+
+                <span
+                  [class]="
+                    getMatchBadgeClass(
+                      job.matchScore
+                    )
+                  "
+                >
+                  {{ job.matchScore }}% Match
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+
+    <!-- Agent Workflow -->
+
+    <div class="app-card">
+
+      <div class="app-card-header">
+
+        <h2 class="section-title">
+          Agent workflow
+        </h2>
+
+        <p class="section-description">
+          How each opportunity is processed.
+        </p>
+
+      </div>
+
+
+      <div class="app-card-body">
+
+        <div class="space-y-5">
+
+          @for (
+            step of [
+              ['1', 'Analyze job', 'Extract requirements and role information'],
+              ['2', 'Match profile', 'Compare the role against your skills'],
+              ['3', 'Retrieve experience', 'Use RAG to find relevant projects'],
+              ['4', 'Generate outreach', 'Prepare a personalized application'],
+              ['5', 'Human approval', 'Nothing is sent without your approval']
+            ];
+            track step[0]
+          ) {
+
+            <div
+              class="
+                flex
+                gap-3
+              "
+            >
+
+              <div
+                class="
+                  flex
+                  size-8
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-brand-600
+                  text-xs
+                  font-semibold
+                  text-white
+                "
+              >
+                {{ step[0] }}
+              </div>
+
+
+              <div>
+
+                <p
+                  class="
+                    text-sm
+                    font-medium
+                    text-slate-900
+                  "
+                >
+                  {{ step[1] }}
+                </p>
+
+                <p
+                  class="
+                    mt-1
+                    text-xs
+                    leading-5
+                    text-slate-500
+                  "
+                >
+                  {{ step[2] }}
+                </p>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Applications -->
+
+  <section class="mt-6">
+
+    <div class="app-card">
+
+      <div class="app-card-header">
+
+        <div
+          class="
+            flex
+            items-start
+            justify-between
+            gap-4
+          "
+        >
+
+          <div>
+
+            <h2 class="section-title">
+              Recent applications
+            </h2>
+
+            <p class="section-description">
+              Latest application and outreach activity.
+            </p>
+
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+          >
+            View applications
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="overflow-x-auto">
+
+        <table class="app-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Role
+              </th>
+
+              <th>
+                Match
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Contact
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @for (
+              application of
+                dashboard().recentApplications;
+              track application.id
+            ) {
+
+              <tr>
+
+                <td>
+
+                  <p
+                    class="
+                      font-medium
+                      text-slate-900
+                    "
+                  >
+                    {{ application.jobTitle }}
+                  </p>
+
+                  <p
+                    class="
+                      mt-1
+                      text-xs
+                      text-slate-500
+                    "
+                  >
+                    {{ application.company }}
+                  </p>
+
+                </td>
+
+
+                <td>
+
+                  <span
+                    [class]="
+                      getMatchBadgeClass(
+                        application.matchScore
+                      )
+                    "
+                  >
+                    {{ application.matchScore }}%
+                  </span>
+
+                </td>
+
+
+                <td>
+
+                  <span
+                    [class]="
+                      getApplicationBadgeClass(
+                        application.status
+                      )
+                    "
+                  >
+                    {{ application.status }}
+                  </span>
+
+                </td>
+
+
+                <td>
+
+                  {{ application.contactEmail || '—' }}
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Human Approval Message -->
+
+  <section class="mt-6">
+
+    <div
+      class="
+        rounded-2xl
+        border
+        border-brand-200
+        bg-brand-50
+        p-5
+        sm:p-6
+      "
+    >
+
+      <div
+        class="
+          flex
+          flex-col
+          gap-3
+          sm:flex-row
+          sm:items-center
+          sm:justify-between
+        "
+      >
+
+        <div>
+
+          <p
+            class="
+              text-sm
+              font-semibold
+              text-brand-900
+            "
+          >
+            Human-in-the-loop is enabled
+          </p>
+
+          <p
+            class="
+              mt-1
+              max-w-2xl
+              text-sm
+              leading-6
+              text-brand-700
+            "
+          >
+            The agent can analyze jobs and prepare outreach,
+            but application emails will require your approval
+            before they are sent.
+          </p>
+
+        </div>
+
+
+        <span class="badge badge-info">
+          Safe mode
+        </span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>

@@ -1,0 +1,105 @@
+<div
+  class="
+    min-h-screen
+    bg-slate-50
+  "
+>
+
+  <!-- Desktop sidebar -->
+
+  <aside
+    class="
+      fixed
+      inset-y-0
+      left-0
+      z-40
+      hidden
+      w-72
+      lg:block
+    "
+  >
+
+    <app-sidebar />
+
+  </aside>
+
+
+  <!-- Mobile sidebar -->
+
+  @if (mobileSidebarOpen()) {
+
+    <div
+      class="
+        fixed
+        inset-0
+        z-50
+        lg:hidden
+      "
+    >
+
+      <!-- Overlay -->
+
+      <button
+        type="button"
+        class="
+          absolute
+          inset-0
+          bg-slate-950/40
+          backdrop-blur-[2px]
+        "
+        aria-label="Close sidebar"
+        (click)="closeSidebar()"
+      ></button>
+
+
+      <!-- Drawer -->
+
+      <aside
+        class="
+          relative
+          h-full
+          w-[280px]
+          max-w-[85vw]
+          shadow-2xl
+        "
+      >
+
+        <app-sidebar
+          [showCloseButton]="true"
+          (closeRequested)="closeSidebar()"
+        />
+
+      </aside>
+
+    </div>
+
+  }
+
+
+  <!-- Main area -->
+
+  <div
+    class="
+      min-h-screen
+      lg:pl-72
+    "
+  >
+
+    <app-topbar
+      (menuRequested)="openSidebar()"
+    />
+
+
+    <main
+      class="
+        min-h-[calc(100vh-4rem)]
+      "
+    >
+
+      <router-outlet />
+
+    </main>
+
+  </div>
+
+</div>

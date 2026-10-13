@@ -1,0 +1,988 @@
+<div class="page-container">
+
+  <!-- =====================================
+       PAGE HEADER
+       ===================================== -->
+
+  <div
+    class="
+      mb-6
+      flex
+      flex-col
+      gap-4
+      sm:flex-row
+      sm:items-start
+      sm:justify-between
+    "
+  >
+
+    <div class="page-header !mb-0">
+
+      <h1 class="page-title">
+        Profile
+      </h1>
+
+      <p class="page-description">
+        Manage the information your AI agent uses for job matching,
+        RAG retrieval and personalized outreach.
+      </p>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="saveProfile()"
+    >
+      Save Profile
+    </button>
+
+  </div>
+
+
+  @if (saved()) {
+
+    <div
+      class="
+        mb-6
+        rounded-xl
+        border
+        border-emerald-200
+        bg-emerald-50
+        px-4
+        py-3
+        text-sm
+        font-medium
+        text-emerald-700
+      "
+    >
+      Profile changes saved locally.
+    </div>
+
+  }
+
+
+  <!-- =====================================
+       TOP GRID
+       ===================================== -->
+
+  <div
+    class="
+      grid
+      gap-6
+      xl:grid-cols-[1.4fr_0.7fr]
+    "
+  >
+
+    <!-- ================================
+         BASIC PROFILE
+         ================================ -->
+
+    <form
+      [formGroup]="profileForm"
+      class="app-card"
+    >
+
+      <div class="app-card-header">
+
+        <h2 class="section-title">
+          Professional information
+        </h2>
+
+        <p class="section-description">
+          This information will be used when evaluating jobs
+          and generating outreach.
+        </p>
+
+      </div>
+
+
+      <div class="app-card-body">
+
+        <div
+          class="
+            grid
+            gap-5
+            md:grid-cols-2
+          "
+        >
+
+          <!-- Full name -->
+
+          <div class="form-group">
+
+            <label
+              for="fullName"
+              class="form-label"
+            >
+              Full name
+
+              <span class="form-required">
+                *
+              </span>
+            </label>
+
+
+            <input
+              id="fullName"
+              type="text"
+              formControlName="fullName"
+              class="form-control"
+              placeholder="Your full name"
+            />
+
+
+            @if (hasError('fullName')) {
+
+              <p class="form-error">
+                Please enter your full name.
+              </p>
+
+            }
+
+          </div>
+
+
+          <!-- Email -->
+
+          <div class="form-group">
+
+            <label
+              for="email"
+              class="form-label"
+            >
+              Email
+
+              <span class="form-required">
+                *
+              </span>
+            </label>
+
+
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-control"
+              placeholder="name@example.com"
+            />
+
+
+            @if (hasError('email')) {
+
+              <p class="form-error">
+                Enter a valid email address.
+              </p>
+
+            }
+
+          </div>
+
+
+          <!-- Phone -->
+
+          <div class="form-group">
+
+            <label
+              for="phone"
+              class="form-label"
+            >
+              Phone
+            </label>
+
+
+            <input
+              id="phone"
+              type="tel"
+              formControlName="phone"
+              class="form-control"
+              placeholder="+92 ..."
+            />
+
+          </div>
+
+
+          <!-- Location -->
+
+          <div class="form-group">
+
+            <label
+              for="location"
+              class="form-label"
+            >
+              Location
+            </label>
+
+
+            <input
+              id="location"
+              type="text"
+              formControlName="location"
+              class="form-control"
+              placeholder="Lahore, Pakistan"
+            />
+
+          </div>
+
+
+          <!-- Headline -->
+
+          <div
+            class="
+              form-group
+              md:col-span-2
+            "
+          >
+
+            <label
+              for="headline"
+              class="form-label"
+            >
+              Professional headline
+            </label>
+
+
+            <input
+              id="headline"
+              type="text"
+              formControlName="headline"
+              class="form-control"
+              placeholder=".NET Backend Developer | Angular | AI"
+            />
+
+          </div>
+
+
+          <!-- Summary -->
+
+          <div
+            class="
+              form-group
+              md:col-span-2
+            "
+          >
+
+            <label
+              for="professionalSummary"
+              class="form-label"
+            >
+              Professional summary
+            </label>
+
+
+            <textarea
+              id="professionalSummary"
+              rows="5"
+              formControlName="professionalSummary"
+              class="form-textarea"
+              placeholder="Briefly describe your experience..."
+            ></textarea>
+
+
+            <p class="form-help">
+              The agent can later use this as additional context
+              when evaluating opportunities.
+            </p>
+
+          </div>
+
+
+          <!-- LinkedIn -->
+
+          <div class="form-group">
+
+            <label
+              for="linkedinUrl"
+              class="form-label"
+            >
+              LinkedIn
+            </label>
+
+
+            <input
+              id="linkedinUrl"
+              type="url"
+              formControlName="linkedinUrl"
+              class="form-control"
+              placeholder="https://linkedin.com/in/..."
+            />
+
+          </div>
+
+
+          <!-- GitHub -->
+
+          <div class="form-group">
+
+            <label
+              for="githubUrl"
+              class="form-label"
+            >
+              GitHub
+            </label>
+
+
+            <input
+              id="githubUrl"
+              type="url"
+              formControlName="githubUrl"
+              class="form-control"
+              placeholder="https://github.com/..."
+            />
+
+          </div>
+
+
+          <!-- Portfolio -->
+
+          <div
+            class="
+              form-group
+              md:col-span-2
+            "
+          >
+
+            <label
+              for="portfolioUrl"
+              class="form-label"
+            >
+              Portfolio
+            </label>
+
+
+            <input
+              id="portfolioUrl"
+              type="url"
+              formControlName="portfolioUrl"
+              class="form-control"
+              placeholder="https://..."
+            />
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </form>
+
+
+    <!-- ================================
+         RESUME
+         ================================ -->
+
+    <div class="space-y-6">
+
+      <section class="app-card">
+
+        <div class="app-card-header">
+
+          <h2 class="section-title">
+            Resume
+          </h2>
+
+          <p class="section-description">
+            Your resume will be parsed and indexed for retrieval.
+          </p>
+
+        </div>
+
+
+        <div class="app-card-body">
+
+          <div
+            class="
+              rounded-2xl
+              border
+              border-dashed
+              border-slate-300
+              bg-slate-50
+              p-5
+            "
+          >
+
+            <div
+              class="
+                flex
+                size-12
+                items-center
+                justify-center
+                rounded-xl
+                bg-white
+                text-xl
+                shadow-sm
+                ring-1
+                ring-slate-200
+              "
+            >
+              ↥
+            </div>
+
+
+            <h3
+              class="
+                mt-4
+                text-sm
+                font-semibold
+                text-slate-900
+              "
+            >
+              Upload resume
+            </h3>
+
+
+            <p
+              class="
+                mt-1
+                text-xs
+                leading-5
+                text-slate-500
+              "
+            >
+              PDF format is recommended.
+            </p>
+
+
+            <label
+              class="
+                btn
+                btn-secondary
+                mt-4
+                cursor-pointer
+              "
+            >
+
+              Choose PDF
+
+              <input
+                type="file"
+                accept=".pdf,application/pdf"
+                class="hidden"
+                (change)="selectResume($event)"
+              />
+
+            </label>
+
+          </div>
+
+
+          @if (resumeFileName()) {
+
+            <div
+              class="
+                mt-4
+                flex
+                items-center
+                gap-3
+                rounded-xl
+                border
+                border-slate-200
+                bg-white
+                p-3
+              "
+            >
+
+              <div
+                class="
+                  flex
+                  size-10
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-lg
+                  bg-rose-50
+                  text-xs
+                  font-bold
+                  text-rose-600
+                "
+              >
+                PDF
+              </div>
+
+
+              <div class="min-w-0 flex-1">
+
+                <p
+                  class="
+                    truncate
+                    text-sm
+                    font-medium
+                    text-slate-900
+                  "
+                >
+                  {{ resumeFileName() }}
+                </p>
+
+
+                <p
+                  class="
+                    mt-0.5
+                    text-xs
+                    text-slate-500
+                  "
+                >
+                  @if (
+                    resumeStatus() ===
+                    'SELECTED'
+                  ) {
+
+                    Ready to upload
+
+                  } @else {
+
+                    Processed and ready
+
+                  }
+                </p>
+
+              </div>
+
+
+              <span
+                class="
+                  size-2.5
+                  rounded-full
+                  bg-emerald-500
+                "
+              ></span>
+
+            </div>
+
+          }
+
+        </div>
+
+      </section>
+
+
+      <!-- Agent Data Status -->
+
+      <section
+        class="
+          rounded-2xl
+          bg-slate-950
+          p-5
+          text-white
+        "
+      >
+
+        <p
+          class="
+            text-xs
+            font-semibold
+            uppercase
+            tracking-wider
+            text-slate-400
+          "
+        >
+          Agent profile
+        </p>
+
+
+        <p
+          class="
+            mt-2
+            text-2xl
+            font-semibold
+          "
+        >
+          85%
+        </p>
+
+
+        <p
+          class="
+            mt-1
+            text-sm
+            text-slate-400
+          "
+        >
+          Profile completeness
+        </p>
+
+
+        <div
+          class="
+            mt-4
+            h-2
+            overflow-hidden
+            rounded-full
+            bg-white/10
+          "
+        >
+
+          <div
+            class="
+              h-full
+              w-[85%]
+              rounded-full
+              bg-brand-400
+            "
+          ></div>
+
+        </div>
+
+
+        <p
+          class="
+            mt-4
+            text-xs
+            leading-5
+            text-slate-400
+          "
+        >
+          A more complete profile gives the job matcher
+          better context for scoring and outreach.
+        </p>
+
+      </section>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================
+       SKILLS
+       ===================================== -->
+
+  <section
+    class="
+      app-card
+      mt-6
+    "
+  >
+
+    <div class="app-card-header">
+
+      <h2 class="section-title">
+        Skills
+      </h2>
+
+      <p class="section-description">
+        Technologies and capabilities used during job matching.
+      </p>
+
+    </div>
+
+
+    <div class="app-card-body">
+
+      <div class="flex flex-wrap gap-2">
+
+        @for (
+          skill of skills();
+          track skill.name
+        ) {
+
+          <span
+            class="
+              inline-flex
+              items-center
+              gap-2
+              rounded-full
+              border
+              border-slate-200
+              bg-slate-50
+              px-3
+              py-1.5
+              text-xs
+              font-medium
+              text-slate-700
+            "
+          >
+
+            {{ skill.name }}
+
+
+            <button
+              type="button"
+              class="
+                text-slate-400
+                transition
+                hover:text-rose-500
+              "
+              aria-label="Remove skill"
+              (click)="removeSkill(skill.name)"
+            >
+              ×
+            </button>
+
+          </span>
+
+        }
+
+      </div>
+
+
+      <div
+        class="
+          mt-5
+          flex
+          max-w-md
+          gap-2
+        "
+      >
+
+        <input
+          #skillInput
+          type="text"
+          class="form-control"
+          placeholder="Add another skill..."
+          (keydown.enter)="
+            $event.preventDefault();
+            addSkill(skillInput)
+          "
+        />
+
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="addSkill(skillInput)"
+        >
+          Add
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================
+       EXPERIENCE + PROJECTS
+       ===================================== -->
+
+  <div
+    class="
+      mt-6
+      grid
+      gap-6
+      xl:grid-cols-2
+    "
+  >
+
+    <!-- EXPERIENCE -->
+
+    <section class="app-card">
+
+      <div class="app-card-header">
+
+        <h2 class="section-title">
+          Experience
+        </h2>
+
+        <p class="section-description">
+          Career history available to the agent.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        @for (
+          item of experience();
+          track item.id
+        ) {
+
+          <article
+            class="
+              border-b
+              border-slate-100
+              p-5
+              last:border-0
+              sm:p-6
+            "
+          >
+
+            <div
+              class="
+                flex
+                items-start
+                gap-3
+              "
+            >
+
+              <div
+                class="
+                  flex
+                  size-10
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-brand-50
+                  text-sm
+                  font-semibold
+                  text-brand-700
+                "
+              >
+                {{ item.company.charAt(0) }}
+              </div>
+
+
+              <div>
+
+                <h3
+                  class="
+                    text-sm
+                    font-semibold
+                    text-slate-950
+                  "
+                >
+                  {{ item.role }}
+                </h3>
+
+
+                <p
+                  class="
+                    mt-1
+                    text-sm
+                    text-slate-500
+                  "
+                >
+                  {{ item.company }}
+                </p>
+
+
+                <p
+                  class="
+                    mt-3
+                    text-sm
+                    leading-6
+                    text-slate-600
+                  "
+                >
+                  {{ item.description }}
+                </p>
+
+
+                <div
+                  class="
+                    mt-3
+                    flex
+                    flex-wrap
+                    gap-2
+                  "
+                >
+
+                  @for (
+                    technology of item.technologies;
+                    track technology
+                  ) {
+
+                    <span class="badge badge-neutral">
+                      {{ technology }}
+                    </span>
+
+                  }
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+    </section>
+
+
+    <!-- PROJECTS -->
+
+    <section class="app-card">
+
+      <div class="app-card-header">
+
+        <h2 class="section-title">
+          Projects
+        </h2>
+
+        <p class="section-description">
+          Project context that can later be retrieved through RAG.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        @for (
+          project of projects();
+          track project.id
+        ) {
+
+          <article
+            class="
+              border-b
+              border-slate-100
+              p-5
+              last:border-0
+              sm:p-6
+            "
+          >
+
+            <h3
+              class="
+                text-sm
+                font-semibold
+                text-slate-950
+              "
+            >
+              {{ project.title }}
+            </h3>
+
+
+            <p
+              class="
+                mt-2
+                text-sm
+                leading-6
+                text-slate-600
+              "
+            >
+              {{ project.description }}
+            </p>
+
+
+            <div
+              class="
+                mt-3
+                flex
+                flex-wrap
+                gap-2
+              "
+            >
+
+              @for (
+                technology of project.technologies;
+                track technology
+              ) {
+
+                <span class="badge badge-info">
+                  {{ technology }}
+                </span>
+
+              }
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>

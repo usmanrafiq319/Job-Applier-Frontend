@@ -1,0 +1,11 @@
+fastapi[standard]
+sqlalchemy>=2.1,<2.2
+alembic
+psycopg[binary]
+pgvector
+pydantic-settings
+python-multipart
+pymupdf
+google-genai
+groq
+langgraph

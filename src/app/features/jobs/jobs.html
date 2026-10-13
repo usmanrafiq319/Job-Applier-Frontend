@@ -1,0 +1,600 @@
+<div class="page-container">
+
+  <!-- =====================================
+       HEADER
+       ===================================== -->
+
+  <div
+    class="
+      mb-6
+      flex
+      flex-col
+      gap-4
+      sm:flex-row
+      sm:items-start
+      sm:justify-between
+    "
+  >
+
+    <div class="page-header !mb-0">
+
+      <h1 class="page-title">
+        Jobs
+      </h1>
+
+      <p class="page-description">
+        Review opportunities analyzed by your AI career agent.
+      </p>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="analyzeAnotherJob()"
+    >
+      + Analyze Job
+    </button>
+
+  </div>
+
+
+  <!-- =====================================
+       SUMMARY
+       ===================================== -->
+
+  <div
+    class="
+      mb-6
+      grid
+      gap-4
+      sm:grid-cols-3
+    "
+  >
+
+    <div class="app-card">
+
+      <div class="app-card-body">
+
+        <p class="text-sm text-slate-500">
+          Total jobs
+        </p>
+
+        <p
+          class="
+            mt-1
+            text-2xl
+            font-semibold
+            text-slate-950
+          "
+        >
+          {{ jobs().length }}
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="app-card">
+
+      <div class="app-card-body">
+
+        <p class="text-sm text-slate-500">
+          High matches
+        </p>
+
+        <p
+          class="
+            mt-1
+            text-2xl
+            font-semibold
+            text-emerald-600
+          "
+        >
+          {{ highMatchCount() }}
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="app-card">
+
+      <div class="app-card-body">
+
+        <p class="text-sm text-slate-500">
+          Showing
+        </p>
+
+        <p
+          class="
+            mt-1
+            text-2xl
+            font-semibold
+            text-slate-950
+          "
+        >
+          {{ filteredJobs().length }}
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================
+       FILTERS
+       ===================================== -->
+
+  <section
+    class="
+      app-card
+      mb-6
+    "
+  >
+
+    <div class="app-card-body">
+
+      <div
+        class="
+          flex
+          flex-col
+          gap-4
+          md:flex-row
+          md:items-end
+        "
+      >
+
+        <!-- Search -->
+
+        <div
+          class="
+            form-group
+            flex-1
+          "
+        >
+
+          <label
+            for="jobSearch"
+            class="form-label"
+          >
+            Search
+          </label>
+
+
+          <input
+            id="jobSearch"
+            type="search"
+            class="form-control"
+            placeholder="Search by role, company or location..."
+            [value]="searchTerm()"
+            (input)="searchChanged($event)"
+          />
+
+        </div>
+
+
+        <!-- Status -->
+
+        <div
+          class="
+            form-group
+            md:w-56
+          "
+        >
+
+          <label
+            for="statusFilter"
+            class="form-label"
+          >
+            Status
+          </label>
+
+
+          <select
+            id="statusFilter"
+            class="form-select"
+            [value]="statusFilter()"
+            (change)="statusChanged($event)"
+          >
+
+            <option value="ALL">
+              All statuses
+            </option>
+
+            <option value="HIGH_MATCH">
+              High Match
+            </option>
+
+            <option value="ANALYZED">
+              Analyzed
+            </option>
+
+            <option value="SAVED">
+              Saved
+            </option>
+
+            <option value="LOW_MATCH">
+              Low Match
+            </option>
+
+            <option value="APPLIED">
+              Applied
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="clearFilters()"
+        >
+          Clear
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================
+       JOBS
+       ===================================== -->
+
+  @if (
+    filteredJobs().length > 0
+  ) {
+
+    <div class="space-y-4">
+
+      @for (
+        job of filteredJobs();
+        track job.id
+      ) {
+
+        <article class="app-card">
+
+          <div class="app-card-body">
+
+            <div
+              class="
+                flex
+                flex-col
+                gap-5
+                lg:flex-row
+                lg:items-start
+                lg:justify-between
+              "
+            >
+
+              <!-- Content -->
+
+              <div
+                class="
+                  min-w-0
+                  flex-1
+                "
+              >
+
+                <div
+                  class="
+                    flex
+                    flex-wrap
+                    items-center
+                    gap-2
+                  "
+                >
+
+                  <h2
+                    class="
+                      text-base
+                      font-semibold
+                      text-slate-950
+                    "
+                  >
+                    {{ job.title }}
+                  </h2>
+
+
+                  <span
+                    [class]="
+                      getStatusBadgeClass(
+                        job.status
+                      )
+                    "
+                  >
+                    {{
+                      statusLabel(
+                        job.status
+                      )
+                    }}
+                  </span>
+
+                </div>
+
+
+                <p
+                  class="
+                    mt-1
+                    text-sm
+                    text-slate-500
+                  "
+                >
+                  {{ job.company }}
+
+                  @if (
+                    job.location
+                  ) {
+
+                    ·
+                    {{ job.location }}
+
+                  }
+
+                </p>
+
+
+                <p
+                  class="
+                    mt-4
+                    max-w-4xl
+                    text-sm
+                    leading-6
+                    text-slate-600
+                  "
+                >
+                  {{ job.description }}
+                </p>
+
+
+                <div
+                  class="
+                    mt-4
+                    flex
+                    flex-wrap
+                    gap-2
+                  "
+                >
+
+                  @if (
+                    job.employmentType
+                  ) {
+
+                    <span
+                      class="
+                        badge
+                        badge-neutral
+                      "
+                    >
+                      {{
+                        job.employmentType
+                          .replaceAll(
+                            '_',
+                            ' '
+                          )
+                      }}
+                    </span>
+
+                  }
+
+
+                  @if (
+                    job.experienceRequired
+                  ) {
+
+                    <span
+                      class="
+                        badge
+                        badge-neutral
+                      "
+                    >
+                      {{
+                        job.experienceRequired
+                      }}
+                    </span>
+
+                  }
+
+
+                  <span
+                    class="
+                      badge
+                      badge-neutral
+                    "
+                  >
+                    Added
+                    {{
+                      job.createdAt
+                        | date:'MMM d'
+                    }}
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <!-- Score + actions -->
+
+              <div
+                class="
+                  flex
+                  shrink-0
+                  flex-col
+                  gap-3
+                  sm:flex-row
+                  lg:items-end
+                "
+              >
+
+                <div
+                  class="
+                    rounded-xl
+                    border
+                    border-slate-200
+                    bg-slate-50
+                    px-5
+                    py-3
+                    text-center
+                  "
+                >
+
+                  <p
+                    class="
+                      text-xs
+                      font-medium
+                      text-slate-500
+                    "
+                  >
+                    Match
+                  </p>
+
+
+                  <p
+                    class="
+                      mt-1
+                      text-2xl
+                      font-semibold
+                      text-slate-950
+                    "
+                  >
+                    {{ job.matchScore ?? 0 }}%
+                  </p>
+
+                </div>
+
+
+                <div
+                  class="
+                    flex
+                    gap-2
+                  "
+                >
+
+                  @if (
+                    job.status !==
+                    'SAVED'
+                  ) {
+
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      (click)="saveJob(job.id)"
+                    >
+                      Save
+                    </button>
+
+                  } @else {
+
+                    <span
+                      class="
+                        btn
+                        bg-brand-50
+                        text-brand-700
+                      "
+                    >
+                      ✓ Saved
+                    </span>
+
+                  }
+
+
+                    <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="viewDetails(job.id)"
+                    >
+                    Details
+                    </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      }
+
+    </div>
+
+  } @else {
+
+    <!-- Empty State -->
+
+    <div
+      class="
+        app-card
+        py-16
+        text-center
+      "
+    >
+
+      <div
+        class="
+          mx-auto
+          flex
+          size-14
+          items-center
+          justify-center
+          rounded-2xl
+          bg-slate-100
+          text-xl
+        "
+      >
+        ⌕
+      </div>
+
+
+      <h3
+        class="
+          mt-4
+          font-semibold
+          text-slate-900
+        "
+      >
+        No jobs found
+      </h3>
+
+
+      <p
+        class="
+          mt-2
+          text-sm
+          text-slate-500
+        "
+      >
+        Try changing your search or filters.
+      </p>
+
+
+      <button
+        type="button"
+        class="
+          btn
+          btn-secondary
+          mt-5
+        "
+        (click)="clearFilters()"
+      >
+        Clear filters
+      </button>
+
+    </div>
+
+  }
+
+</div>

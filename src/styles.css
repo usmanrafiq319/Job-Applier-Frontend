@@ -1,1 +1,310 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+
+/* ======================================================
+   THEME
+   ====================================================== */
+
+@theme {
+
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-200: #99f6e4;
+  --color-brand-300: #5eead4;
+  --color-brand-400: #2dd4bf;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+  --color-brand-900: #134e4a;
+  --color-brand-950: #042f2e;
+
+}
+
+
+/* ======================================================
+   BASE
+   ====================================================== */
+
+@layer base {
+
+  html {
+    min-height: 100%;
+    background: #f8fafc;
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+
+    @apply bg-slate-50 text-slate-950 antialiased;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+}
+
+
+/* ======================================================
+   LAYOUT
+   ====================================================== */
+
+@layer components {
+
+  .page-container {
+    @apply mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8;
+  }
+
+
+  .page-header {
+    @apply mb-6 flex flex-col gap-1;
+  }
+
+
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight text-slate-950;
+  }
+
+
+  .page-description {
+    @apply text-sm leading-6 text-slate-500;
+  }
+
+
+  .section-title {
+    @apply text-lg font-semibold text-slate-950;
+  }
+
+
+  .section-description {
+    @apply mt-1 text-sm leading-6 text-slate-500;
+  }
+
+}
+
+
+/* ======================================================
+   CARDS
+   ====================================================== */
+
+@layer components {
+
+  .app-card {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+  }
+
+
+  .app-card-header {
+    @apply border-b border-slate-100 px-5 py-4 sm:px-6;
+  }
+
+
+  .app-card-body {
+    @apply p-5 sm:p-6;
+  }
+
+
+  .app-card-footer {
+    @apply border-t border-slate-100 px-5 py-4 sm:px-6;
+  }
+
+}
+
+
+/* ======================================================
+   BUTTONS
+   ====================================================== */
+
+@layer components {
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2
+    rounded-xl px-4 py-2.5
+    text-sm font-semibold
+    transition
+    focus:outline-none
+    focus:ring-2
+    focus:ring-offset-2
+    disabled:pointer-events-none
+    disabled:opacity-50;
+  }
+
+
+  .btn-primary {
+    @apply bg-brand-600
+    text-white
+    hover:bg-brand-700
+    focus:ring-brand-500;
+  }
+
+
+  .btn-secondary {
+    @apply border border-slate-300
+    bg-white
+    text-slate-700
+    hover:bg-slate-50
+    focus:ring-slate-300;
+  }
+
+
+  .btn-ghost {
+    @apply bg-transparent
+    text-slate-600
+    hover:bg-slate-100
+    hover:text-slate-950;
+  }
+
+
+  .btn-danger {
+    @apply bg-rose-600
+    text-white
+    hover:bg-rose-700
+    focus:ring-rose-500;
+  }
+
+
+  .btn-success {
+    @apply bg-emerald-600
+    text-white
+    hover:bg-emerald-700
+    focus:ring-emerald-500;
+  }
+
+  .form-group {
+    @apply flex flex-col gap-2;
+  }
+
+  .form-label {
+    @apply text-sm font-medium text-slate-700;
+  }
+
+  .form-required {
+    @apply text-rose-500;
+  }
+
+  .form-control,
+  .form-textarea,
+  .form-select {
+    @apply w-full
+    rounded-xl
+    border border-slate-300
+    bg-white
+    px-3.5 py-2.5
+    text-sm text-slate-900
+    placeholder:text-slate-400
+    outline-none
+    transition
+    focus:border-brand-600
+    focus:ring-2
+    focus:ring-brand-500/20
+    disabled:bg-slate-100
+    disabled:text-slate-500;
+  }
+
+  .form-textarea {
+    @apply resize-none leading-6;
+  }
+
+  .form-select {
+    @apply cursor-pointer;
+  }
+
+  .form-help {
+    @apply text-xs leading-5 text-slate-500;
+  }
+
+  .form-error {
+    @apply text-xs font-medium text-rose-600;
+  }
+
+
+  .badge {
+    @apply inline-flex items-center
+    rounded-full
+    px-2.5 py-1
+    text-xs font-semibold;
+  }
+
+
+  .badge-success {
+    @apply bg-emerald-50 text-emerald-700;
+  }
+
+
+  .badge-warning {
+    @apply bg-amber-50 text-amber-700;
+  }
+
+
+  .badge-danger {
+    @apply bg-rose-50 text-rose-700;
+  }
+
+
+  .badge-info {
+    @apply bg-brand-50 text-brand-700;
+  }
+
+
+  .badge-neutral {
+    @apply bg-slate-100 text-slate-700;
+  }
+
+
+  .table-container {
+    @apply overflow-hidden rounded-2xl border border-slate-200 bg-white;
+  }
+
+
+  .app-table {
+    @apply min-w-full divide-y divide-slate-200;
+  }
+
+
+  .app-table thead {
+    @apply bg-slate-50;
+  }
+
+
+  .app-table th {
+    @apply px-5 py-3 text-left
+    text-xs font-semibold
+    uppercase tracking-wider
+    text-slate-500;
+  }
+
+
+  .app-table td {
+    @apply px-5 py-4 text-sm text-slate-600;
+  }
+
+
+  .app-table tbody {
+    @apply divide-y divide-slate-100;
+  }
+
+
+}
+
+@utility scrollbar-hidden {
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  scrollbar-width: none;
+
+}

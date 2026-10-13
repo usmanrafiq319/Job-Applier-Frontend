@@ -1,0 +1,970 @@
+<div class="page-container">
+
+  <!-- Header -->
+
+  <div class="page-header">
+
+    <h1 class="page-title">
+      Analyze Job
+    </h1>
+
+    <p class="page-description">
+      Paste a vacancy and compare its requirements against your
+      profile, skills, projects and experience.
+    </p>
+
+  </div>
+
+
+  <div
+    class="
+      grid
+      gap-6
+      xl:grid-cols-[0.9fr_1.1fr]
+    "
+  >
+
+    <!-- ========================================
+         INPUT
+         ======================================== -->
+
+    <form
+      [formGroup]="form"
+      class="app-card h-fit"
+      (ngSubmit)="analyzeJob()"
+    >
+
+      <div class="app-card-header">
+
+        <h2 class="section-title">
+          Job information
+        </h2>
+
+        <p class="section-description">
+          V1 uses manually pasted job information.
+        </p>
+
+      </div>
+
+
+      <div class="app-card-body">
+
+        <div class="space-y-5">
+
+          <!-- Title -->
+
+          <div class="form-group">
+
+            <label
+              for="title"
+              class="form-label"
+            >
+              Job title
+
+              <span class="form-required">
+                *
+              </span>
+            </label>
+
+
+            <input
+              id="title"
+              type="text"
+              formControlName="title"
+              class="form-control"
+              placeholder="Junior .NET Developer"
+            />
+
+
+            @if (
+              hasError('title')
+            ) {
+
+              <p class="form-error">
+                Job title is required.
+              </p>
+
+            }
+
+          </div>
+
+
+          <!-- Company -->
+
+          <div class="form-group">
+
+            <label
+              for="company"
+              class="form-label"
+            >
+              Company
+
+              <span class="form-required">
+                *
+              </span>
+            </label>
+
+
+            <input
+              id="company"
+              type="text"
+              formControlName="company"
+              class="form-control"
+              placeholder="Company name"
+            />
+
+
+            @if (
+              hasError('company')
+            ) {
+
+              <p class="form-error">
+                Company name is required.
+              </p>
+
+            }
+
+          </div>
+
+
+          <!-- Location -->
+
+          <div class="form-group">
+
+            <label
+              for="location"
+              class="form-label"
+            >
+              Location
+            </label>
+
+
+            <input
+              id="location"
+              type="text"
+              formControlName="location"
+              class="form-control"
+              placeholder="Lahore, Pakistan"
+            />
+
+          </div>
+
+
+          <!-- URL -->
+
+          <div class="form-group">
+
+            <label
+              for="jobUrl"
+              class="form-label"
+            >
+              Job URL
+            </label>
+
+
+            <input
+              id="jobUrl"
+              type="url"
+              formControlName="jobUrl"
+              class="form-control"
+              placeholder="https://..."
+            />
+
+
+            <p class="form-help">
+              Automatic URL extraction will be added with the backend.
+            </p>
+
+          </div>
+
+
+          <!-- Description -->
+
+          <div class="form-group">
+
+            <label
+              for="description"
+              class="form-label"
+            >
+              Job description
+
+              <span class="form-required">
+                *
+              </span>
+            </label>
+
+
+            <textarea
+              id="description"
+              rows="13"
+              formControlName="description"
+              class="form-textarea"
+              placeholder="Paste the complete job description here..."
+            ></textarea>
+
+
+            @if (
+              hasError(
+                'description'
+              )
+            ) {
+
+              <p class="form-error">
+                Paste at least 40 characters from the job description.
+              </p>
+
+            }
+
+          </div>
+
+
+          @if (
+            analysisError()
+          ) {
+
+            <div
+              class="
+                rounded-xl
+                border
+                border-rose-200
+                bg-rose-50
+                px-4
+                py-3
+                text-sm
+                text-rose-700
+              "
+            >
+              {{ analysisError() }}
+            </div>
+
+          }
+
+
+          <div
+            class="
+              flex
+              flex-col
+              gap-3
+              sm:flex-row
+            "
+          >
+
+            <button
+              type="submit"
+              class="
+                btn
+                btn-primary
+                flex-1
+              "
+              [disabled]="analyzing()"
+            >
+
+              @if (
+                analyzing()
+              ) {
+
+                Analyzing...
+
+              } @else {
+
+                Analyze Job
+
+              }
+
+            </button>
+
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="reset()"
+            >
+              Clear
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </form>
+
+
+    <!-- ========================================
+         RESULTS
+         ======================================== -->
+
+    <div>
+
+      @if (
+        analyzing()
+      ) {
+
+        <div
+          class="
+            app-card
+            flex
+            min-h-[560px]
+            items-center
+            justify-center
+          "
+        >
+
+          <div class="text-center">
+
+            <div
+              class="
+                mx-auto
+                size-12
+                animate-spin
+                rounded-full
+                border-4
+                border-slate-200
+                border-t-brand-600
+              "
+            ></div>
+
+
+            <p
+              class="
+                mt-4
+                text-sm
+                font-medium
+                text-slate-900
+              "
+            >
+              Analyzing job...
+            </p>
+
+
+            <p
+              class="
+                mt-1
+                text-xs
+                text-slate-500
+              "
+            >
+              Comparing requirements with your profile.
+            </p>
+
+          </div>
+
+        </div>
+
+      }
+
+      @else if (
+        analysis();
+        as result
+      ) {
+
+        <div class="space-y-6">
+
+          <!-- Match Overview -->
+
+          <section class="app-card">
+
+            <div class="app-card-body">
+
+              <div
+                class="
+                  flex
+                  flex-col
+                  gap-5
+                  sm:flex-row
+                  sm:items-start
+                  sm:justify-between
+                "
+              >
+
+                <div>
+
+                  <span
+                    [class]="
+                      getRecommendationClass(
+                        result.analysis.recommendation
+                      )
+                    "
+                  >
+                    {{
+                      getRecommendationLabel(
+                        result.analysis.recommendation
+                      )
+                    }}
+                  </span>
+
+
+                  <h2
+                    class="
+                      mt-3
+                      text-xl
+                      font-semibold
+                      text-slate-950
+                    "
+                  >
+                    {{ result.job.title }}
+                  </h2>
+
+
+                  <p
+                    class="
+                      mt-1
+                      text-sm
+                      text-slate-500
+                    "
+                  >
+                    {{ result.job.company }}
+
+                    @if (
+                      result.job.location
+                    ) {
+
+                      ·
+                      {{ result.job.location }}
+
+                    }
+
+                  </p>
+
+                </div>
+
+
+                <div
+                  class="
+                    rounded-2xl
+                    bg-slate-950
+                    px-6
+                    py-4
+                    text-center
+                    text-white
+                  "
+                >
+
+                  <p
+                    class="
+                      text-xs
+                      font-semibold
+                      uppercase
+                      tracking-wider
+                      text-slate-400
+                    "
+                  >
+                    Match
+                  </p>
+
+
+                  <p
+                    class="
+                      mt-1
+                      text-3xl
+                      font-semibold
+                    "
+                  >
+                    {{
+                      result.analysis
+                        .matchScore
+                    }}%
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <p
+                class="
+                  mt-5
+                  text-sm
+                  leading-6
+                  text-slate-600
+                "
+              >
+                {{
+                  result.analysis.summary
+                }}
+              </p>
+
+            </div>
+
+          </section>
+
+
+          <!-- Skills -->
+
+          <div
+            class="
+              grid
+              gap-6
+              md:grid-cols-2
+            "
+          >
+
+            <!-- Matched -->
+
+            <section class="app-card">
+
+              <div class="app-card-body">
+
+                <h3 class="section-title">
+                  Matched skills
+                </h3>
+
+
+                <p class="section-description">
+                  Requirements already supported by your profile.
+                </p>
+
+
+                <div
+                  class="
+                    mt-4
+                    flex
+                    flex-wrap
+                    gap-2
+                  "
+                >
+
+                  @for (
+                    skill of
+                      result.analysis
+                        .matchedSkills;
+                    track skill
+                  ) {
+
+                    <span
+                      class="
+                        badge
+                        badge-success
+                      "
+                    >
+                      ✓ {{ skill }}
+                    </span>
+
+                  }
+
+
+                  @if (
+                    result.analysis
+                      .matchedSkills
+                      .length === 0
+                  ) {
+
+                    <p
+                      class="
+                        text-sm
+                        text-slate-500
+                      "
+                    >
+                      No clear matches detected.
+                    </p>
+
+                  }
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            <!-- Missing -->
+
+            <section class="app-card">
+
+              <div class="app-card-body">
+
+                <h3 class="section-title">
+                  Skill gaps
+                </h3>
+
+
+                <p class="section-description">
+                  Requirements that may need additional experience.
+                </p>
+
+
+                <div
+                  class="
+                    mt-4
+                    flex
+                    flex-wrap
+                    gap-2
+                  "
+                >
+
+                  @for (
+                    skill of
+                      result.analysis
+                        .missingSkills;
+                    track skill
+                  ) {
+
+                    <span
+                      class="
+                        badge
+                        badge-warning
+                      "
+                    >
+                      ○ {{ skill }}
+                    </span>
+
+                  }
+
+
+                  @if (
+                    result.analysis
+                      .missingSkills
+                      .length === 0
+                  ) {
+
+                    <span
+                      class="
+                        badge
+                        badge-success
+                      "
+                    >
+                      No major gaps detected
+                    </span>
+
+                  }
+
+                </div>
+
+              </div>
+
+            </section>
+
+          </div>
+
+
+          <!-- Requirements -->
+
+          <section class="app-card">
+
+            <div class="app-card-header">
+
+              <h3 class="section-title">
+                Requirements analysis
+              </h3>
+
+            </div>
+
+
+            <div>
+
+              @for (
+                requirement of
+                  result.analysis
+                    .requirements;
+                track requirement.skill
+              ) {
+
+                <div
+                  class="
+                    flex
+                    items-center
+                    justify-between
+                    gap-4
+                    border-b
+                    border-slate-100
+                    px-5
+                    py-3.5
+                    last:border-0
+                    sm:px-6
+                  "
+                >
+
+                  <div>
+
+                    <p
+                      class="
+                        text-sm
+                        font-medium
+                        text-slate-900
+                      "
+                    >
+                      {{ requirement.skill }}
+                    </p>
+
+
+                    <p
+                      class="
+                        mt-0.5
+                        text-xs
+                        text-slate-500
+                      "
+                    >
+                      Required skill
+                    </p>
+
+                  </div>
+
+
+                  @if (
+                    requirement.matched
+                  ) {
+
+                    <span
+                      class="
+                        badge
+                        badge-success
+                      "
+                    >
+                      Matched
+                    </span>
+
+                  } @else {
+
+                    <span
+                      class="
+                        badge
+                        badge-warning
+                      "
+                    >
+                      Missing
+                    </span>
+
+                  }
+
+                </div>
+
+              }
+
+            </div>
+
+          </section>
+
+
+          <!-- RAG -->
+
+          <section class="app-card">
+
+            <div class="app-card-header">
+
+              <h3 class="section-title">
+                Relevant experience
+              </h3>
+
+
+              <p class="section-description">
+                Context that the future RAG system can retrieve
+                from your profile.
+              </p>
+
+            </div>
+
+
+            <div class="app-card-body">
+
+              <div class="space-y-3">
+
+                @for (
+                  experience of
+                    result.analysis
+                      .relevantExperience;
+                  track experience.id
+                ) {
+
+                  <article
+                    class="
+                      rounded-xl
+                      border
+                      border-slate-200
+                      bg-slate-50
+                      p-4
+                    "
+                  >
+
+                    <div
+                      class="
+                        flex
+                        items-start
+                        justify-between
+                        gap-3
+                      "
+                    >
+
+                      <div>
+
+                        <span
+                          class="
+                            badge
+                            badge-info
+                          "
+                        >
+                          {{ experience.type }}
+                        </span>
+
+
+                        <h4
+                          class="
+                            mt-2
+                            text-sm
+                            font-semibold
+                            text-slate-900
+                          "
+                        >
+                          {{ experience.title }}
+                        </h4>
+
+                      </div>
+
+
+                      @if (
+                        experience.similarityScore
+                      ) {
+
+                        <span
+                          class="
+                            text-xs
+                            font-medium
+                            text-slate-500
+                          "
+                        >
+                          {{
+                            (
+                              experience
+                                .similarityScore *
+                              100
+                            ).toFixed(0)
+                          }}%
+                        </span>
+
+                      }
+
+                    </div>
+
+
+                    <p
+                      class="
+                        mt-2
+                        text-sm
+                        leading-6
+                        text-slate-600
+                      "
+                    >
+                      {{ experience.content }}
+                    </p>
+
+                  </article>
+
+                }
+
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <!-- Actions -->
+
+          <div
+            class="
+              flex
+              flex-col
+              gap-3
+              sm:flex-row
+            "
+          >
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="viewJobs()"
+            >
+              Save & View Jobs
+            </button>
+
+
+            <button
+              type="button"
+              disabled
+              class="btn btn-secondary"
+            >
+              Generate Outreach
+              <span class="text-xs">
+                Soon
+              </span>
+            </button>
+
+          </div>
+
+        </div>
+
+      }
+
+      @else {
+
+        <!-- Empty State -->
+
+        <div
+          class="
+            app-card
+            flex
+            min-h-[560px]
+            items-center
+            justify-center
+            p-8
+          "
+        >
+
+          <div
+            class="
+              max-w-sm
+              text-center
+            "
+          >
+
+            <div
+              class="
+                mx-auto
+                flex
+                size-14
+                items-center
+                justify-center
+                rounded-2xl
+                bg-brand-50
+                text-2xl
+                text-brand-700
+              "
+            >
+              ✦
+            </div>
+
+
+            <h3
+              class="
+                mt-4
+                font-semibold
+                text-slate-900
+              "
+            >
+              Ready to analyze
+            </h3>
+
+
+            <p
+              class="
+                mt-2
+                text-sm
+                leading-6
+                text-slate-500
+              "
+            >
+              Paste a job description to see its match score,
+              required skills, skill gaps and relevant experience.
+            </p>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+</div>

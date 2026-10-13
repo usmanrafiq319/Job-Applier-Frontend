@@ -1,0 +1,53 @@
+<div
+  class="
+    flex
+    items-center
+    justify-center
+  "
+  [style.min-height]="minHeight()"
+>
+
+  <div class="text-center">
+
+    <div
+      class="
+        mx-auto
+        size-12
+        animate-spin
+        rounded-full
+        border-4
+        border-slate-200
+        border-t-brand-600
+      "
+    ></div>
+
+
+    <p
+      class="
+        mt-4
+        text-sm
+        font-medium
+        text-slate-900
+      "
+    >
+      {{ title() }}
+    </p>
+
+
+    @if (description()) {
+
+      <p
+        class="
+          mt-1
+          text-xs
+          text-slate-500
+        "
+      >
+        {{ description() }}
+      </p>
+
+    }
+
+  </div>
+
+</div>

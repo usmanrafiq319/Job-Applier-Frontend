@@ -1,0 +1,179 @@
+<div class="space-y-1">
+
+  @for (
+    item of steps;
+    track item.step;
+    let index = $index
+  ) {
+
+    <div
+      class="
+        flex
+        gap-3
+        py-3
+      "
+    >
+
+      <!-- Indicator -->
+
+      <div
+        class="
+          flex
+          flex-col
+          items-center
+        "
+      >
+
+        <div
+          class="
+            flex
+            size-8
+            items-center
+            justify-center
+            rounded-full
+            text-xs
+            font-semibold
+          "
+
+          [class.bg-emerald-100]="
+            stepState(index) ===
+            'completed'
+          "
+
+          [class.text-emerald-700]="
+            stepState(index) ===
+            'completed'
+          "
+
+          [class.bg-brand-600]="
+            stepState(index) ===
+            'active'
+          "
+
+          [class.text-white]="
+            stepState(index) ===
+            'active'
+          "
+
+          [class.bg-slate-100]="
+            stepState(index) ===
+            'pending'
+          "
+
+          [class.text-slate-400]="
+            stepState(index) ===
+            'pending'
+          "
+        >
+
+          @if (
+            stepState(index) ===
+            'completed'
+          ) {
+
+            ✓
+
+          } @else {
+
+            {{ index + 1 }}
+
+          }
+
+        </div>
+
+
+        @if (
+          index <
+          steps.length - 1
+        ) {
+
+          <div
+            class="
+              mt-1
+              h-full
+              min-h-6
+              w-px
+              bg-slate-200
+            "
+          ></div>
+
+        }
+
+      </div>
+
+
+      <!-- Text -->
+
+      <div class="pb-3">
+
+        <p
+          class="
+            text-sm
+            font-medium
+          "
+
+          [class.text-slate-950]="
+            stepState(index) !==
+            'pending'
+          "
+
+          [class.text-slate-400]="
+            stepState(index) ===
+            'pending'
+          "
+        >
+          {{ item.title }}
+        </p>
+
+
+        <p
+          class="
+            mt-1
+            text-xs
+            leading-5
+            text-slate-500
+          "
+        >
+          {{ item.description }}
+        </p>
+
+
+        @if (
+          stepState(index) ===
+          'active'
+        ) {
+
+          <span
+            class="
+              mt-2
+              inline-flex
+              items-center
+              gap-1.5
+              text-xs
+              font-medium
+              text-brand-700
+            "
+          >
+
+            <span
+              class="
+                size-1.5
+                animate-pulse
+                rounded-full
+                bg-brand-600
+              "
+            ></span>
+
+            Running
+
+          </span>
+
+        }
+
+      </div>
+
+    </div>
+
+  }
+
+</div>
