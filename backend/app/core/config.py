@@ -1,3 +1,5 @@
+# This holds environment-dependent configuration.	It loads .env values such as database URL, Gemini key, Groq key, embedding model, LLM models, frontend URL, and API prefix into one cached settings object.
+
 from functools import lru_cache
 from pathlib import Path
 

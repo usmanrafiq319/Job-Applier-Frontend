@@ -7,6 +7,14 @@ import {
 } from '@angular/core';
 
 import {
+  JobService
+} from '../../services/job.service';
+
+import {
+  HttpErrorResponse
+} from '@angular/common/http';
+
+import {
   DatePipe
 } from '@angular/common';
 
@@ -53,170 +61,83 @@ export class Jobs {
    *   .subscribe(...)
    */
 
+  private readonly jobService =
+    inject(JobService);
+
 
   protected readonly jobs =
-    signal<Job[]>([
-
-      {
-        id: 'job-1',
-
-        title:
-          'Junior .NET Developer',
-
-        company:
-          'Tech Solutions',
-
-        location:
-          'Lahore, Pakistan',
-
-        description:
-          'Looking for a junior developer with ASP.NET Core, C#, Angular, SQL and REST API experience.',
-
-        employmentType:
-          'FULL_TIME',
-
-        experienceRequired:
-          '0-2 years',
-
-        status:
-          'HIGH_MATCH',
-
-        matchScore:
-          88,
-
-        createdAt:
-          '2026-10-05T10:00:00Z'
-      },
+    signal<Job[]>([]);
 
 
-      {
-        id: 'job-2',
-
-        title:
-          '.NET Backend Developer',
-
-        company:
-          'NovaSoft',
-
-        location:
-          'Lahore, Pakistan',
-
-        description:
-          'Backend development role using .NET, PostgreSQL, REST APIs, Docker and Azure.',
-
-        employmentType:
-          'FULL_TIME',
-
-        experienceRequired:
-          '1-2 years',
-
-        status:
-          'ANALYZED',
-
-        matchScore:
-          74,
-
-        createdAt:
-          '2026-10-04T08:30:00Z'
-      },
+  protected readonly loading =
+    signal(true);
 
 
-      {
-        id: 'job-3',
-
-        title:
-          'AI Backend Intern',
-
-        company:
-          'AI Labs',
-
-        location:
-          'Remote, Pakistan',
-
-        description:
-          'AI backend internship working with FastAPI, LLMs, vector search, LangChain and RAG.',
-
-        employmentType:
-          'INTERNSHIP',
-
-        experienceRequired:
-          'Entry Level',
-
-        status:
-          'HIGH_MATCH',
-
-        matchScore:
-          82,
-
-        createdAt:
-          '2026-10-03T13:00:00Z'
-      },
+  protected readonly error =
+    signal<string | null>(
+      null
+    );
 
 
-      {
-        id: 'job-4',
+  constructor() {
 
-        title:
-          'Angular Developer',
+    this.loadJobs();
 
-        company:
-          'Digital House',
-
-        location:
-          'Lahore, Pakistan',
-
-        description:
-          'Frontend-focused Angular opportunity requiring Angular, TypeScript, Tailwind and REST API integration.',
-
-        employmentType:
-          'FULL_TIME',
-
-        experienceRequired:
-          '1 year',
-
-        status:
-          'ANALYZED',
-
-        matchScore:
-          69,
-
-        createdAt:
-          '2026-10-02T11:15:00Z'
-      },
+  }
 
 
-      {
-        id: 'job-5',
+  private loadJobs(): void {
 
-        title:
-          'Cloud .NET Engineer',
+    this.loading.set(
+      true
+    );
 
-        company:
-          'Enterprise Cloud',
+    this.error.set(
+      null
+    );
 
-        location:
-          'Lahore, Pakistan',
 
-        description:
-          'Experienced .NET developer required with Azure, Docker, Kubernetes and cloud-native development.',
+    this.jobService
+      .getJobs()
+      .subscribe({
 
-        employmentType:
-          'FULL_TIME',
+        next: jobs => {
 
-        experienceRequired:
-          '3+ years',
+          this.jobs.set(
+            jobs
+          );
 
-        status:
-          'LOW_MATCH',
+          this.loading.set(
+            false
+          );
 
-        matchScore:
-          46,
+        },
 
-        createdAt:
-          '2026-10-01T09:45:00Z'
-      }
 
-    ]);
+        error: (
+          error: HttpErrorResponse
+        ) => {
+
+          console.error(
+            'Failed to load jobs:',
+            error
+          );
+
+
+          this.error.set(
+            'Unable to load jobs.'
+          );
+
+
+          this.loading.set(
+            false
+          );
+
+        }
+
+      });
+
+  }
 
 
   protected readonly searchTerm =
@@ -299,7 +220,7 @@ export class Jobs {
     const value =
       (
         event.target as
-          HTMLInputElement
+        HTMLInputElement
       ).value;
 
 
@@ -317,7 +238,7 @@ export class Jobs {
     const value =
       (
         event.target as
-          HTMLSelectElement
+        HTMLSelectElement
       ).value as JobStatusFilter;
 
 
@@ -343,19 +264,43 @@ export class Jobs {
     jobId: string
   ): void {
 
-    this.jobs.update(
-      jobs =>
-        jobs.map(
-          job =>
-            job.id === jobId
-              ? {
-                  ...job,
-                  status:
-                    'SAVED'
-                }
-              : job
-        )
-    );
+    this.jobService
+      .updateStatus(
+        jobId,
+        'SAVED'
+      )
+      .subscribe({
+
+        next: updatedJob => {
+
+          this.jobs.update(
+            jobs =>
+              jobs.map(
+                job =>
+                  job.id
+                    === updatedJob.id
+                    ? {
+                        ...job,
+                        status:
+                          updatedJob.status
+                      }
+                    : job
+              )
+          );
+
+        },
+
+
+        error: error => {
+
+          console.error(
+            'Could not save job:',
+            error
+          );
+
+        }
+
+      });
 
   }
 
@@ -450,14 +395,14 @@ export class Jobs {
   }
 
   protected viewDetails(
-  jobId: string
-): void {
+    jobId: string
+  ): void {
 
-  this.router.navigate([
-    '/jobs',
-    jobId
-  ]);
+    this.router.navigate([
+      '/jobs',
+      jobId
+    ]);
 
-}
+  }
 
 }

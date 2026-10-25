@@ -8,15 +8,6 @@ export type JobStatus =
   | 'APPLIED';
 
 
-export type EmploymentType =
-  | 'FULL_TIME'
-  | 'PART_TIME'
-  | 'CONTRACT'
-  | 'INTERNSHIP'
-  | 'REMOTE'
-  | 'OTHER';
-
-
 export interface Job {
 
   id: string;
@@ -31,9 +22,7 @@ export interface Job {
 
   jobUrl?: string;
 
-  employmentType?: EmploymentType;
-
-  experienceRequired?: string;
+  source?: string;
 
   status: JobStatus;
 
@@ -56,18 +45,14 @@ export interface CreateJobRequest {
   description: string;
 
   jobUrl?: string;
+
+  source?: string;
 }
 
 
 export interface AnalyzeJobRequest {
 
-  title: string;
+  jobId: string;
 
-  company: string;
-
-  location?: string;
-
-  description: string;
-
-  jobUrl?: string;
+  resumeLimit?: number;
 }

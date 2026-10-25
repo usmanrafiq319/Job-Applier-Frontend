@@ -15,13 +15,21 @@ import {
 } from '@angular/router';
 
 import {
-  AnalyzeJobRequest
+  HttpErrorResponse
+} from '@angular/common/http';
+
+import {
+  CreateJobRequest
 } from '../../models/job.model';
 
 import {
   JobAnalysisResponse,
   MatchRecommendation
 } from '../../models/job-analysis.model';
+
+import {
+  JobService
+} from '../../services/job.service';
 
 
 @Component({
@@ -31,9 +39,11 @@ import {
     ReactiveFormsModule
   ],
 
-  templateUrl: './job-analyzer.html',
+  templateUrl:
+    './job-analyzer.html',
 
-  styleUrl: './job-analyzer.css'
+  styleUrl:
+    './job-analyzer.css'
 })
 export class JobAnalyzer {
 
@@ -43,17 +53,8 @@ export class JobAnalyzer {
   private readonly router =
     inject(Router);
 
-
-  /*
-   * Later:
-   *
-   * private readonly jobService =
-   *   inject(JobService);
-   *
-   * this.jobService
-   *   .analyzeJob(request)
-   *   .subscribe(...)
-   */
+  private readonly jobService =
+    inject(JobService);
 
 
   protected readonly analyzing =
@@ -61,9 +62,9 @@ export class JobAnalyzer {
 
 
   protected readonly analysis =
-    signal<JobAnalysisResponse | null>(
-      null
-    );
+    signal<
+      JobAnalysisResponse | null
+    >(null);
 
 
   protected readonly analysisError =
@@ -104,170 +105,6 @@ export class JobAnalyzer {
     });
 
 
-  /*
-   * Temporary frontend knowledge.
-   *
-   * This will disappear once FastAPI +
-   * LangGraph perform the real analysis.
-   */
-  private readonly profileSkills =
-    new Set([
-
-      'ASP.NET Core',
-
-      'C#',
-
-      'Angular',
-
-      'SQL',
-
-      'PostgreSQL',
-
-      'REST APIs',
-
-      'Entity Framework Core',
-
-      'SignalR',
-
-      'FastAPI',
-
-      'LangChain',
-
-      'LangGraph',
-
-      'RAG',
-
-      'Tailwind CSS'
-
-    ]);
-
-
-  /*
-   * Only for frontend simulation.
-   *
-   * This lets you paste different job
-   * descriptions and still see different
-   * mock results.
-   */
-  private readonly knownSkills = [
-
-    {
-      name: 'ASP.NET Core',
-      keywords: [
-        'asp.net',
-        'asp.net core',
-        '.net core'
-      ]
-    },
-
-    {
-      name: 'C#',
-      keywords: [
-        'c#',
-        'c sharp'
-      ]
-    },
-
-    {
-      name: 'Angular',
-      keywords: [
-        'angular'
-      ]
-    },
-
-    {
-      name: 'SQL',
-      keywords: [
-        'sql'
-      ]
-    },
-
-    {
-      name: 'PostgreSQL',
-      keywords: [
-        'postgresql',
-        'postgres'
-      ]
-    },
-
-    {
-      name: 'REST APIs',
-      keywords: [
-        'rest',
-        'rest api',
-        'restful'
-      ]
-    },
-
-    {
-      name: 'Entity Framework Core',
-      keywords: [
-        'entity framework',
-        'ef core'
-      ]
-    },
-
-    {
-      name: 'SignalR',
-      keywords: [
-        'signalr'
-      ]
-    },
-
-    {
-      name: 'FastAPI',
-      keywords: [
-        'fastapi'
-      ]
-    },
-
-    {
-      name: 'LangChain',
-      keywords: [
-        'langchain'
-      ]
-    },
-
-    {
-      name: 'LangGraph',
-      keywords: [
-        'langgraph'
-      ]
-    },
-
-    {
-      name: 'RAG',
-      keywords: [
-        'rag',
-        'retrieval augmented'
-      ]
-    },
-
-    {
-      name: 'Docker',
-      keywords: [
-        'docker'
-      ]
-    },
-
-    {
-      name: 'Azure',
-      keywords: [
-        'azure'
-      ]
-    },
-
-    {
-      name: 'AWS',
-      keywords: [
-        'aws',
-        'amazon web services'
-      ]
-    }
-
-  ];
-
-
   protected analyzeJob(): void {
 
     if (this.form.invalid) {
@@ -279,46 +116,86 @@ export class JobAnalyzer {
     }
 
 
-    this.analyzing.set(true);
+    this.analyzing.set(
+      true
+    );
 
-    this.analysis.set(null);
+    this.analysis.set(
+      null
+    );
 
-    this.analysisError.set(null);
+    this.analysisError.set(
+      null
+    );
 
 
-    const request:
-      AnalyzeJobRequest =
+    const formValue =
       this.form.getRawValue();
 
 
-    /*
-     * Temporary delay to simulate
-     * backend / LangGraph execution.
-     */
-    window.setTimeout(
-      () => {
+    const request:
+      CreateJobRequest = {
 
-        try {
+      title:
+        formValue.title,
 
-          const result =
-            this.buildMockAnalysis(
-              request
-            );
+      company:
+        formValue.company,
 
+      location:
+        formValue.location,
+
+      jobUrl:
+        formValue.jobUrl,
+
+      description:
+        formValue.description,
+
+      source:
+        'MANUAL'
+
+    };
+
+
+    this.jobService
+      .createAndAnalyzeJob(
+        request
+      )
+      .subscribe({
+
+        next: result => {
 
           this.analysis.set(
             result
           );
 
-        }
-        catch {
-
-          this.analysisError.set(
-            'Unable to analyze the job.'
+          this.analyzing.set(
+            false
           );
 
-        }
-        finally {
+        },
+
+
+        error: (
+          error: HttpErrorResponse
+        ) => {
+
+          console.error(
+            'Job analysis failed:',
+            error
+          );
+
+
+          const detail =
+            error.error?.detail;
+
+
+          this.analysisError.set(
+            typeof detail === 'string'
+              ? detail
+              : 'Unable to analyze the job.'
+          );
+
 
           this.analyzing.set(
             false
@@ -326,258 +203,7 @@ export class JobAnalyzer {
 
         }
 
-      },
-      700
-    );
-
-  }
-
-
-  private buildMockAnalysis(
-    request: AnalyzeJobRequest
-  ): JobAnalysisResponse {
-
-    const description =
-      request.description
-        .toLowerCase();
-
-
-    const requirements =
-      this.knownSkills
-        .filter(
-          skill =>
-            skill.keywords.some(
-              keyword =>
-                description.includes(
-                  keyword
-                )
-            )
-        );
-
-
-    /*
-     * If user pasted a generic job
-     * with no known keywords,
-     * provide a small sample.
-     */
-    const detectedRequirements =
-      requirements.length > 0
-        ? requirements
-        : [
-            {
-              name: 'ASP.NET Core',
-              keywords: []
-            },
-
-            {
-              name: 'Angular',
-              keywords: []
-            },
-
-            {
-              name: 'Azure',
-              keywords: []
-            }
-          ];
-
-
-    const matchedSkills =
-      detectedRequirements
-        .filter(
-          requirement =>
-            this.profileSkills.has(
-              requirement.name
-            )
-        )
-        .map(
-          requirement =>
-            requirement.name
-        );
-
-
-    const missingSkills =
-      detectedRequirements
-        .filter(
-          requirement =>
-            !this.profileSkills.has(
-              requirement.name
-            )
-        )
-        .map(
-          requirement =>
-            requirement.name
-        );
-
-
-    const total =
-      detectedRequirements.length;
-
-
-    const ratio =
-      total === 0
-        ? 0
-        : matchedSkills.length / total;
-
-
-    const matchScore =
-      Math.min(
-        95,
-        Math.max(
-          30,
-          Math.round(
-            30 + ratio * 65
-          )
-        )
-      );
-
-
-    const recommendation:
-      MatchRecommendation =
-      matchScore >= 80
-        ? 'STRONG_MATCH'
-        : matchScore >= 60
-          ? 'POSSIBLE_MATCH'
-          : 'LOW_MATCH';
-
-
-    return {
-
-      job: {
-
-        id:
-          `job-${Date.now()}`,
-
-        title:
-          request.title,
-
-        company:
-          request.company,
-
-        location:
-          request.location
-
-      },
-
-
-      analysis: {
-
-        jobId:
-          `job-${Date.now()}`,
-
-        matchScore,
-
-        recommendation,
-
-        summary:
-          this.createSummary(
-            matchScore,
-            matchedSkills,
-            missingSkills
-          ),
-
-        matchedSkills,
-
-        missingSkills,
-
-        requirements:
-          detectedRequirements.map(
-            requirement => ({
-
-              skill:
-                requirement.name,
-
-              required:
-                true,
-
-              matched:
-                this.profileSkills.has(
-                  requirement.name
-                )
-
-            })
-          ),
-
-        relevantExperience: [
-
-          {
-            id: 'experience-1',
-
-            type: 'EXPERIENCE',
-
-            title:
-              '.NET Full-Stack Internship',
-
-            content:
-              'Worked with ASP.NET Core, Angular, REST APIs, SQL and real-time application features.',
-
-            similarityScore:
-              0.89
-          },
-
-          {
-            id: 'project-1',
-
-            type: 'PROJECT',
-
-            title:
-              'Full-Stack E-Commerce',
-
-            content:
-              'Built an ASP.NET Core and Angular application with JWT, PostgreSQL, SignalR and Cloudflare R2.',
-
-            similarityScore:
-              0.86
-          },
-
-          {
-            id: 'project-2',
-
-            type: 'PROJECT',
-
-            title:
-              'AI Knowledge Hub',
-
-            content:
-              'Built a FastAPI RAG backend using PostgreSQL, pgvector, Gemini and Groq.',
-
-            similarityScore:
-              0.76
-          }
-
-        ],
-
-        analyzedAt:
-          new Date()
-            .toISOString()
-
-      }
-
-    };
-
-  }
-
-
-  private createSummary(
-    score: number,
-    matched: string[],
-    missing: string[]
-  ): string {
-
-    if (score >= 80) {
-
-      return `This looks like a strong opportunity. Your profile matches ${matched.length} important requirements, with only a few potential gaps.`;
-
-    }
-
-
-    if (score >= 60) {
-
-      return `This role has reasonable alignment with your current experience, but you should review the missing skills before applying.`;
-
-    }
-
-
-    return `This role currently has a lower match with your profile. Review the missing requirements before deciding whether to apply.`;
+      });
 
   }
 
@@ -592,17 +218,12 @@ export class JobAnalyzer {
     ) {
 
       case 'STRONG_MATCH':
-
         return 'Strong Match';
 
-
       case 'POSSIBLE_MATCH':
-
         return 'Possible Match';
 
-
       case 'LOW_MATCH':
-
         return 'Low Match';
 
     }
@@ -621,17 +242,23 @@ export class JobAnalyzer {
 
       case 'STRONG_MATCH':
 
-        return 'badge badge-success';
+        return (
+          'badge badge-success'
+        );
 
 
       case 'POSSIBLE_MATCH':
 
-        return 'badge badge-warning';
+        return (
+          'badge badge-warning'
+        );
 
 
       case 'LOW_MATCH':
 
-        return 'badge badge-danger';
+        return (
+          'badge badge-danger'
+        );
 
     }
 
@@ -689,9 +316,11 @@ export class JobAnalyzer {
 
 
     return (
-      control.invalid &&
+      control.invalid
+      &&
       (
-        control.touched ||
+        control.touched
+        ||
         control.dirty
       )
     );

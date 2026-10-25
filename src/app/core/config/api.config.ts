@@ -1,3 +1,5 @@
+// Loads environment/config values such as database URL, Groq key, Gemini key, model names, frontend URL, etc. It gives the rest of the application one centralized settings object instead of reading .env everywhere.
+
 import { InjectionToken } from '@angular/core';
 
 export interface ApiConfig {

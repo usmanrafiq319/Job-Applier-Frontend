@@ -1,3 +1,5 @@
+# This is the entry point of the FastAPI backend.	It creates the FastAPI app, enables CORS for Angular, attaches /api/v1 routes, and exposes the root endpoint.
+    
 from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware

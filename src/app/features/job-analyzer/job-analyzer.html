@@ -655,9 +655,8 @@
 
               @for (
                 requirement of
-                  result.analysis
-                    .requirements;
-                track requirement.skill
+                  result.analysis.requirements;
+                track requirement.id
               ) {
 
                 <div
@@ -684,9 +683,11 @@
                         text-slate-900
                       "
                     >
-                      {{ requirement.skill }}
+                      {{
+                        requirement.skillName
+                          ?? requirement.text
+                      }}
                     </p>
-
 
                     <p
                       class="
@@ -695,34 +696,55 @@
                         text-slate-500
                       "
                     >
-                      Required skill
+                      {{
+                        requirement.requirementType
+                      }}
+                      ·
+                      {{
+                        requirement.required
+                          ? 'Required'
+                          : 'Optional'
+                      }}
+                      ·
+                      {{
+                        requirement.importance
+                      }}
                     </p>
 
                   </div>
 
 
                   @if (
-                    requirement.matched
+                    requirement.requirementType
+                      === 'SKILL'
                   ) {
 
-                    <span
-                      class="
-                        badge
-                        badge-success
-                      "
-                    >
-                      Matched
-                    </span>
+                    @if (
+                      requirement.matched
+                    ) {
+
+                      <span
+                        class="badge badge-success"
+                      >
+                        Matched
+                      </span>
+
+                    } @else {
+
+                      <span
+                        class="badge badge-warning"
+                      >
+                        Missing
+                      </span>
+
+                    }
 
                   } @else {
 
                     <span
-                      class="
-                        badge
-                        badge-warning
-                      "
+                      class="badge badge-info"
                     >
-                      Missing
+                      Detected
                     </span>
 
                   }
@@ -746,10 +768,9 @@
                 Relevant experience
               </h3>
 
-
               <p class="section-description">
-                Context that the future RAG system can retrieve
-                from your profile.
+                Resume, project and experience evidence used
+                to support this job match.
               </p>
 
             </div>
@@ -812,7 +833,7 @@
 
 
                       @if (
-                        experience.similarityScore
+                        experience.similarityScore  !== undefined
                       ) {
 
                         <span
@@ -874,7 +895,7 @@
               class="btn btn-primary"
               (click)="viewJobs()"
             >
-              Save & View Jobs
+              View Jobs
             </button>
 
 

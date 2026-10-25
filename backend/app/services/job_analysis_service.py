@@ -95,10 +95,7 @@ class JobAnalysisService:
         )
 
 
-    def _canonicalize_skill(
-        self,
-        value: str
-    ) -> str:
+    def _canonicalize_skill(self,value: str) -> str:
 
         normalized = (
             value.strip().casefold()

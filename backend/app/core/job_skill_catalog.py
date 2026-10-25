@@ -1,3 +1,5 @@
+# This is the deterministic dictionary of known technical skills and their aliases.	It lets your fallback logic understand that values such as postgres, PostgreSQL, or asp net core refer to canonical skills and also defines words for required/optional importance.
+
 JOB_SKILL_ALIASES: dict[str, list[str]] = {
 
     "Python": [

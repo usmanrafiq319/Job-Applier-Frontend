@@ -7,21 +7,16 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 
-@Injectable({
-  providedIn: 'root'
-})
 export class ApiClientService {
 
   private readonly http = inject(HttpClient);
 
-  private readonly config =
-    inject<ApiConfig>(API_CONFIG);
+  private readonly config = inject<ApiConfig>(API_CONFIG);
 
 
   private get baseUrl(): string {
 
-    const baseUrl =
-      this.config.baseUrl.replace(/\/+$/, '');
+    const baseUrl = this.config.baseUrl.replace(/\/+$/, '');
 
     const version =
       this.config.apiVersion.replace(/^\/+|\/+$/g, '');

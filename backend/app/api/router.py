@@ -1,3 +1,4 @@
+# This is the central API router.	It collects all smaller routers such as profile, jobs, resume, skills, and agent and makes them part of one API.
 
 from fastapi import APIRouter
 

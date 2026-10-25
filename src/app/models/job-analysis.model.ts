@@ -1,4 +1,7 @@
-import { Job } from './job.model';
+import {
+  Job
+} from './job.model';
+
 
 export type MatchRecommendation =
   | 'STRONG_MATCH'
@@ -6,11 +9,33 @@ export type MatchRecommendation =
   | 'LOW_MATCH';
 
 
+export type RequirementType =
+  | 'SKILL'
+  | 'EXPERIENCE'
+  | 'EDUCATION'
+  | 'RESPONSIBILITY'
+  | 'OTHER';
+
+
+export type RequirementImportance =
+  | 'LOW'
+  | 'MEDIUM'
+  | 'HIGH';
+
+
 export interface JobRequirement {
 
-  skill: string;
+  id: string;
+
+  text: string;
+
+  requirementType: RequirementType;
+
+  skillName?: string;
 
   required: boolean;
+
+  importance: RequirementImportance;
 
   matched: boolean;
 }
@@ -18,29 +43,31 @@ export interface JobRequirement {
 
 export interface RelevantExperience {
 
-  id?: string;
+  id: string;
 
   type:
     | 'PROJECT'
     | 'EXPERIENCE'
-    | 'SKILL'
     | 'RESUME';
 
   title: string;
 
   content: string;
 
-  similarityScore?: number;
+  similarityScore: number;
 }
 
 
 export interface JobAnalysis {
 
+  id: string;
+
   jobId: string;
 
   matchScore: number;
 
-  recommendation: MatchRecommendation;
+  recommendation:
+    MatchRecommendation;
 
   summary: string;
 
@@ -48,9 +75,11 @@ export interface JobAnalysis {
 
   missingSkills: string[];
 
-  requirements: JobRequirement[];
+  requirements:
+    JobRequirement[];
 
-  relevantExperience: RelevantExperience[];
+  relevantExperience:
+    RelevantExperience[];
 
   analyzedAt: string;
 }
@@ -58,20 +87,15 @@ export interface JobAnalysis {
 
 export interface JobAnalysisResponse {
 
-  job: {
-    id: string;
-
-    title: string;
-
-    company: string;
-
-    location?: string;
-  };
+  job: Job;
 
   analysis: JobAnalysis;
 }
 
+
 export interface JobDetailsData {
+
   job: Job;
+
   analysis: JobAnalysis;
 }

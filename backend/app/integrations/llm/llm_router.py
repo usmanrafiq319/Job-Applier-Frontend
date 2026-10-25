@@ -11,10 +11,7 @@ from app.integrations.llm.groq_llm import (
 )
 
 
-class LLMMode(
-    str,
-    Enum
-):
+class LLMMode(str,Enum):
 
     FAST = "fast"
 

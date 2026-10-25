@@ -1,3 +1,5 @@
+# This owns the PostgreSQL connection engine and database sessions.	get_db() gives each FastAPI request an async AsyncSession and rolls the transaction back when an exception occurs.
+
 from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
